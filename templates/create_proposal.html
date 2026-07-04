@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Proposal · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item active"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div style="font-family: var(--font-display); font-size:16px; font-weight:600;">New Proposal</div>
+    </header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for message in messages %}
+          <div class="info-box" style="display:block; margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+      <div class="two-col-layout">
+        <div class="panel">
+          <div class="panel-head"><h2>Project Details</h2></div>
+          <form method="POST" action="/proposals/create">
+            <div class="field">
+              <label>Client Name</label>
+              <input type="text" name="client_name" placeholder="e.g. John Smith" value="{{ client_name or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Project Title</label>
+              <input type="text" name="project_title" placeholder="e.g. Build a Portfolio Website" value="{{ project_title or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Project Description</label>
+              <textarea name="project_description" rows="4" placeholder="Paste the client's job description here..." required>{{ project_description or '' }}</textarea>
+            </div>
+            <div class="field">
+              <label>Your Skills</label>
+              <input type="text" name="skills" placeholder="e.g. Python, Flask, React" value="{{ skills or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Budget</label>
+              <input type="text" name="budget" placeholder="e.g. $300" value="{{ budget or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Timeline</label>
+              <input type="text" name="timeline" placeholder="e.g. 1 week" value="{{ timeline or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Tone</label>
+              <select name="tone">
+                <option value="Professional" {% if tone == 'Professional' %}selected{% endif %}>Professional</option>
+                <option value="Friendly" {% if tone == 'Friendly' %}selected{% endif %}>Friendly</option>
+                <option value="Confident" {% if tone == 'Confident' %}selected{% endif %}>Confident</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button type="submit" name="action" value="generate" class="btn-primary" style="flex:1; padding:12px;">Generate with AI</button>
+              {% if generated_text %}
+              <button type="submit" name="action" value="save" class="btn-secondary" style="flex:1; padding:12px;">Save Proposal</button>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Generated Proposal</h2>
+            {% if generated_text %}
+            <button class="action-btn copy-btn" onclick="copyGenerated()">Copy</button>
+            {% endif %}
+          </div>
+          {% if generated_text %}
+          <div id="generatedOutput" class="generated-text">{{ generated_text }}</div>
+          <form method="POST" action="/proposals/create" style="margin-top:12px;">
+            <input type="hidden" name="client_name" value="{{ client_name }}">
+            <input type="hidden" name="project_title" value="{{ project_title }}">
+            <input type="hidden" name="project_description" value="{{ project_description }}">
+            <input type="hidden" name="skills" value="{{ skills }}">
+            <input type="hidden" name="budget" value="{{ budget }}">
+            <input type="hidden" name="timeline" value="{{ timeline }}">
+            <input type="hidden" name="tone" value="{{ tone }}">
+            <button type="submit" name="action" value="generate" class="action-btn" style="width:100%; padding:10px;">🔄 Regenerate</button>
+          </form>
+          {% else %}
+          <div class="empty-state" style="min-height:300px;">
+            <p style="color: var(--text-muted);">Fill in the form and click "Generate with AI" to see your proposal here.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+function copyGenerated() {
+  const text = document.getElementById('generatedOutput').innerText;
+  navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+}
+</script>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">AI is generating your content...</div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const action = document.activeElement.value;
+  if (action === 'generate') {
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Cover Letter · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item active"><span class="icon">✉</span> Cover Letters</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div style="font-family: var(--font-display); font-size:16px; font-weight:600;">New Cover Letter</div>
+    </header>
+
+    <main class="content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for message in messages %}
+          <div class="info-box" style="display:block; margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+
+      <div class="two-col-layout">
+        <div class="panel">
+          <div class="panel-head"><h2>Job Details</h2></div>
+          <form method="POST" action="/cover-letters/create">
+            <div class="field">
+              <label>Job Title</label>
+              <input type="text" name="job_title" placeholder="e.g. Frontend Developer" value="{{ job_title or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Company Name</label>
+              <input type="text" name="company_name" placeholder="e.g. Google" value="{{ company_name or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Your Experience</label>
+              <textarea name="experience" rows="3" placeholder="e.g. 2 years of web development experience with React and Node.js..." required>{{ experience or '' }}</textarea>
+            </div>
+            <div class="field">
+              <label>Your Skills</label>
+              <input type="text" name="skills" placeholder="e.g. React, Python, Communication" value="{{ skills or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Portfolio / GitHub URL (optional)</label>
+              <input type="text" name="portfolio_url" placeholder="e.g. https://github.com/sara" value="{{ portfolio_url or '' }}">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button type="submit" name="action" value="generate" class="btn-primary" style="flex:1; padding:12px;">Generate with AI</button>
+              {% if generated_text %}
+              <button type="submit" name="action" value="save" class="btn-secondary" style="flex:1; padding:12px;">Save Letter</button>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Generated Cover Letter</h2>
+            {% if generated_text %}
+            <button class="action-btn copy-btn" onclick="copyGenerated()">Copy</button>
+            {% endif %}
+          </div>
+          {% if generated_text %}
+          <div id="generatedOutput" class="generated-text">{{ generated_text }}</div>
+          {% else %}
+          <div class="empty-state" style="min-height:300px;">
+            <p style="color: var(--text-muted);">Fill in the form and click "Generate with AI".</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+function copyGenerated() {
+  const text = document.getElementById('generatedOutput').innerText;
+  navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+}
+</script>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">AI is generating your content...</div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const action = document.activeElement.value;
+  if (action === 'generate') {
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

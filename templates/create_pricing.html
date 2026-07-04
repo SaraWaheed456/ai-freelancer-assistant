@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculate Pricing · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item active"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div style="font-family: var(--font-display); font-size:16px; font-weight:600;">Smart Pricing Calculator</div>
+    </header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for message in messages %}
+          <div class="info-box" style="display:block; margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+      <div class="two-col-layout">
+        <div class="panel">
+          <div class="panel-head"><h2>Project Details</h2></div>
+          <form method="POST" action="/pricing/create">
+            <div class="field">
+              <label>Your Hourly Rate ($)</label>
+              <input type="number" name="hourly_rate" placeholder="e.g. 15" value="{{ hourly_rate or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Estimated Hours</label>
+              <input type="number" name="estimated_hours" placeholder="e.g. 20" value="{{ estimated_hours or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Project Complexity</label>
+              <select name="complexity">
+                <option value="Simple" {% if complexity == 'Simple' %}selected{% endif %}>Simple (x1.0)</option>
+                <option value="Medium" {% if complexity == 'Medium' %}selected{% endif %}>Medium (x1.3)</option>
+                <option value="Complex" {% if complexity == 'Complex' %}selected{% endif %}>Complex (x1.6)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Urgency</label>
+              <select name="urgency">
+                <option value="Normal" {% if urgency == 'Normal' %}selected{% endif %}>Normal (x1.0)</option>
+                <option value="Urgent" {% if urgency == 'Urgent' %}selected{% endif %}>Urgent (x1.2)</option>
+                <option value="Very Urgent" {% if urgency == 'Very Urgent' %}selected{% endif %}>Very Urgent (x1.5)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Additional Charges ($)</label>
+              <input type="number" name="additional_charges" placeholder="e.g. 50 (tools, licenses)" value="{{ additional_charges or '0' }}">
+            </div>
+            <div class="field">
+              <label>Tax (%)</label>
+              <input type="number" name="tax" placeholder="e.g. 10" value="{{ tax or '0' }}">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button type="submit" name="action" value="calculate" class="btn-primary" style="flex:1; padding:12px;">Calculate & Analyze</button>
+              {% if suggested_price %}
+              <button type="submit" name="action" value="save" class="btn-secondary" style="flex:1; padding:12px;">Save Result</button>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>AI Pricing Analysis</h2></div>
+          {% if suggested_price %}
+          <div style="text-align:center; padding:20px; background: var(--signal-dim); border-radius: var(--radius); margin-bottom:20px;">
+            <div style="font-size:13px; color: var(--text-muted); margin-bottom:4px;">Suggested Price</div>
+            <div style="font-family: var(--font-display); font-size:40px; font-weight:700; color: var(--signal);">{{ suggested_price }}</div>
+          </div>
+          <div class="generated-text">{{ ai_analysis }}</div>
+          {% else %}
+          <div class="empty-state" style="min-height:300px;">
+            <p style="color: var(--text-muted);">Fill in the details and click "Calculate & Analyze".</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

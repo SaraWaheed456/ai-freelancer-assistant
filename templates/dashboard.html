@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item active"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/history" class="nav-item"><span class="icon">🕐</span> History</a>
+      <a href="/profile" class="nav-item"><span class="icon">👤</span> Profile</a>
+      <a href="/settings" class="nav-item"><span class="icon">⚙</span> Settings</a>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder="Search...">
+      </div>
+      <div class="topbar-right">
+        <div class="profile-chip">
+        {% if profile_picture %}
+        <img src="{{ url_for('static', filename=profile_picture) }}" 
+          style="width:30px;height:30px;border-radius:50%;object-fit:cover;">
+        {% else %}
+        <div class="avatar">{{ full_name[0] | upper }}</div>
+        {% endif %}
+        <div><div class="name">{{ full_name }}</div><div class="role">Freelancer</div></div>
+      </div>
+      </div>
+    </header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for m in messages %}
+          <div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+      <div class="content-header">
+        <div><h1>Welcome back, {{ full_name }} 👋</h1><p>Here's your freelance work summary.</p></div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns: repeat(4,1fr);">
+        <div class="stat-card"><div class="stat-top"><div class="stat-icon">📄</div></div><div class="stat-value">{{ proposal_count }}</div><div class="stat-label">Proposals</div></div>
+        <div class="stat-card teal"><div class="stat-top"><div class="stat-icon">✉</div></div><div class="stat-value">{{ cover_letter_count }}</div><div class="stat-label">Cover Letters</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-icon">⚡</div></div><div class="stat-value">{{ gig_count }}</div><div class="stat-label">Gig Descriptions</div></div>
+        <div class="stat-card teal"><div class="stat-top"><div class="stat-icon">💬</div></div><div class="stat-value">{{ reply_count }}</div><div class="stat-label">Client Replies</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-icon">🧾</div></div><div class="stat-value">{{ invoice_count }}</div><div class="stat-label">Invoices</div></div>
+        <div class="stat-card teal"><div class="stat-top"><div class="stat-icon">📄</div></div><div class="stat-value">{{ contract_count }}</div><div class="stat-label">Contracts</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-icon">💰</div></div><div class="stat-value">{{ pricing_count }}</div><div class="stat-label">Pricing Calcs</div></div>
+        <div class="stat-card teal"><div class="stat-top"><div class="stat-icon">⏱</div></div><div class="stat-value">238</div><div class="stat-label">AI Credits</div></div>
+      </div>
+      <div class="dash-grid">
+        <div class="panel">
+          <div class="panel-head"><h2>Recent Activity</h2></div>
+          {% for p in recent_proposals %}<div class="activity-item"><div class="activity-icon">✎</div><div><div class="activity-text"><strong>Proposal</strong> — {{ p['project_title'] }}</div><div class="activity-time">{{ p['created_at'] }}</div></div></div>{% endfor %}
+          {% for c in recent_covers %}<div class="activity-item"><div class="activity-icon">✉</div><div><div class="activity-text"><strong>Cover Letter</strong> — {{ c['job_title'] }}</div><div class="activity-time">{{ c['created_at'] }}</div></div></div>{% endfor %}
+          {% for g in recent_gigs %}<div class="activity-item"><div class="activity-icon">⚡</div><div><div class="activity-text"><strong>Gig</strong> — {{ g['category'] }}</div><div class="activity-time">{{ g['created_at'] }}</div></div></div>{% endfor %}
+          {% for r in recent_replies %}<div class="activity-item"><div class="activity-icon">💬</div><div><div class="activity-text"><strong>Client Reply</strong> — {{ r['tone'] }} tone</div><div class="activity-time">{{ r['created_at'] }}</div></div></div>{% endfor %}
+          {% if not recent_proposals and not recent_covers and not recent_gigs and not recent_replies %}<p style="color:var(--text-muted);font-size:13px;">No activity yet.</p>{% endif %}
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Quick Actions</h2></div>
+          <div class="quick-actions">
+            <a href="/proposals/create" class="quick-action-btn"><span class="qa-icon">✎</span><span>New Proposal<small>Generate from a job post</small></span></a>
+            <a href="/cover-letters/create" class="quick-action-btn"><span class="qa-icon">✉</span><span>New Cover Letter<small>Draft for a job</small></span></a>
+            <a href="/client-replies/create" class="quick-action-btn"><span class="qa-icon">💬</span><span>Reply to Client<small>AI-powered response</small></span></a>
+            <a href="/invoices/create" class="quick-action-btn"><span class="qa-icon">🧾</span><span>New Invoice<small>Generate & download PDF</small></span></a>
+            <a href="/contracts/create" class="quick-action-btn"><span class="qa-icon">📄</span><span>New Contract<small>AI-generated agreement</small></span></a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

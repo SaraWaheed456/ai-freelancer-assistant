@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="auth-page">
+
+  <div class="auth-side">
+    <div class="ledger-mark"><span class="dot">●</span> Freelancer Assistant</div>
+    <div class="auth-side-content">
+      <div class="ledger-stack">
+        <div class="ledger-receipt">
+          <span class="tag">Step 1</span>
+          <strong>Create account</strong>
+          takes under a minute
+        </div>
+        <div class="ledger-receipt">
+          <span class="tag">Step 2</span>
+          <strong>Start generating</strong>
+          proposals & cover letters
+        </div>
+      </div>
+      <p class="ledger-stat-line">Join freelancers who let AI handle the first draft.</p>
+    </div>
+    <p class="auth-quote">"Setup took two minutes." — a freelancer, probably</p>
+  </div>
+
+  <div class="auth-main">
+    <div class="auth-card">
+      <h1>Create your account</h1>
+      <p class="subtitle">Start automating your freelance admin today.</p>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="info-box" style="display:block;">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="/register">
+        <div class="field">
+          <label for="fullname">Full name</label>
+          <input type="text" id="fullname" name="fullname" placeholder="Sara Ahmed" required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Create a password" required>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Create Account</button>
+      </form>
+
+      <p class="auth-foot">Already have an account? <a href="/login" class="link-accent">Log in</a></p>
+    </div>
+  </div>
+
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

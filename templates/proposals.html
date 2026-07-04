@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposals · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item active"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder="Search proposals...">
+      </div>
+      <div class="topbar-right">
+        <a href="/proposals/create" class="btn-primary" style="padding: 9px 18px; border-radius: 8px; font-size:13px; font-weight:600;">+ New Proposal</a>
+      </div>
+    </header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for message in messages %}
+          <div class="info-box" style="display:block; margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+      <div class="content-header">
+        <div><h1>Proposals</h1><p>All your AI-generated proposals in one place.</p></div>
+      </div>
+      {% if proposals %}
+      <div class="proposals-list">
+        {% for p in proposals %}
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <div>
+              <h3>{{ p['project_title'] }}</h3>
+              <span class="proposal-meta">Client: {{ p['client_name'] }} &nbsp;|&nbsp; Budget: {{ p['budget'] }} &nbsp;|&nbsp; {{ p['timeline'] }}</span>
+            </div>
+            <span class="tone-badge">{{ p['tone'] }}</span>
+          </div>
+          <p class="proposal-preview">{{ p['generated_text'][:200] }}...</p>
+          <div class="proposal-actions">
+            <a href="/proposals/edit/{{ p['id'] }}" class="action-btn">Edit</a>
+            <button class="action-btn copy-btn" onclick="copyText(`{{ p['generated_text'] | replace('`', '') }}`)">Copy</button>
+            <a href="/proposals/export/{{ p['id'] }}" class="action-btn">Export PDF</a>
+            <a href="/proposals/delete/{{ p['id'] }}" class="action-btn danger-btn" onclick="return confirm('Delete this proposal?')">Delete</a>
+          </div>
+          <div class="proposal-date">{{ p['created_at'] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p>No proposals yet.</p>
+        <a href="/proposals/create" class="btn-primary" style="display:inline-block; margin-top:14px; padding:10px 22px; border-radius:8px;">Generate First Proposal</a>
+      </div>
+      {% endif %}
+    </main>
+  </div>
+</div>
+<script>
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => alert('Proposal copied to clipboard!'));
+}
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

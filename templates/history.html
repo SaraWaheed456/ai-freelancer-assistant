@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/history" class="nav-item active"><span class="icon">🕐</span> History</a>
+      <a href="/profile" class="nav-item"><span class="icon">👤</span> Profile</a>
+      <a href="/settings" class="nav-item"><span class="icon">⚙</span> Settings</a>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div style="font-family:var(--font-display);font-size:16px;font-weight:600;">Complete History</div>
+    </header>
+
+    <main class="content">
+      <div class="content-header">
+        <div><h1>History</h1><p>All your generated content in one place.</p></div>
+      </div>
+
+      {% if proposals %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>✎ Proposals ({{ proposals|length }})</h2>
+          <a href="/proposals" class="view-all">View All</a>
+        </div>
+        {% for p in proposals %}
+        <div class="activity-item">
+          <div class="activity-icon">✎</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ p['project_title'] }}</strong> — {{ p['client_name'] }}</div>
+            <div class="activity-time">{{ p['created_at'] }} | Budget: {{ p['budget'] }}</div>
+          </div>
+          <a href="/proposals/delete/{{ p['id'] }}" class="action-btn danger-btn" style="font-size:11px;" onclick="return confirm('Delete?')">Delete</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if covers %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>✉ Cover Letters ({{ covers|length }})</h2>
+          <a href="/cover-letters" class="view-all">View All</a>
+        </div>
+        {% for c in covers %}
+        <div class="activity-item">
+          <div class="activity-icon">✉</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ c['job_title'] }}</strong> — {{ c['company_name'] }}</div>
+            <div class="activity-time">{{ c['created_at'] }}</div>
+          </div>
+          <a href="/cover-letters/delete/{{ c['id'] }}" class="action-btn danger-btn" style="font-size:11px;" onclick="return confirm('Delete?')">Delete</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if gigs %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>⚡ Gig Descriptions ({{ gigs|length }})</h2>
+          <a href="/gig-generator" class="view-all">View All</a>
+        </div>
+        {% for g in gigs %}
+        <div class="activity-item">
+          <div class="activity-icon">⚡</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ g['category'] }}</strong> — {{ g['experience_level'] }}</div>
+            <div class="activity-time">{{ g['created_at'] }} | Delivery: {{ g['delivery_time'] }}</div>
+          </div>
+          <a href="/gig-generator/delete/{{ g['id'] }}" class="action-btn danger-btn" style="font-size:11px;" onclick="return confirm('Delete?')">Delete</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if pricing %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>💰 Pricing Calculations ({{ pricing|length }})</h2>
+          <a href="/pricing" class="view-all">View All</a>
+        </div>
+        {% for p in pricing %}
+        <div class="activity-item">
+          <div class="activity-icon">💰</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ p['suggested_price'] }}</strong> — {{ p['complexity'] }} complexity</div>
+            <div class="activity-time">{{ p['created_at'] }} | Rate: ${{ p['hourly_rate'] }}/hr | Hours: {{ p['estimated_hours'] }}</div>
+          </div>
+          <a href="/pricing/delete/{{ p['id'] }}" class="action-btn danger-btn" style="font-size:11px;" onclick="return confirm('Delete?')">Delete</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if invoices %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>🧾 Invoices ({{ invoices|length }})</h2>
+          <a href="/invoices" class="view-all">View All</a>
+        </div>
+        {% for inv in invoices %}
+        <div class="activity-item">
+          <div class="activity-icon">🧾</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ inv['project_title'] }}</strong> — {{ inv['client_name'] }}</div>
+            <div class="activity-time">{{ inv['created_at'] }} | Total: {{ inv['total_amount'] }} | Due: {{ inv['due_date'] }}</div>
+          </div>
+          <a href="/invoices/export/{{ inv['id'] }}" class="action-btn" style="font-size:11px;">PDF</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if contracts %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>📄 Contracts ({{ contracts|length }})</h2>
+          <a href="/contracts" class="view-all">View All</a>
+        </div>
+        {% for c in contracts %}
+        <div class="activity-item">
+          <div class="activity-icon">📄</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ c['client_name'] }}</strong> — {{ c['project_scope'][:60] }}...</div>
+            <div class="activity-time">{{ c['created_at'] }} | Timeline: {{ c['timeline'] }}</div>
+          </div>
+          <a href="/contracts/export/{{ c['id'] }}" class="action-btn" style="font-size:11px;">PDF</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if replies %}
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <h2>💬 Client Replies ({{ replies|length }})</h2>
+          <a href="/client-replies" class="view-all">View All</a>
+        </div>
+        {% for r in replies %}
+        <div class="activity-item">
+          <div class="activity-icon">💬</div>
+          <div style="flex:1;">
+            <div class="activity-text"><strong>{{ r['tone'] }} tone</strong> — {{ r['client_message'][:60] }}...</div>
+            <div class="activity-time">{{ r['created_at'] }}</div>
+          </div>
+          <a href="/client-replies/delete/{{ r['id'] }}" class="action-btn danger-btn" style="font-size:11px;" onclick="return confirm('Delete?')">Delete</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if not proposals and not covers and not gigs and not pricing and not invoices and not contracts and not replies %}
+      <div class="empty-state">
+        <p>No history yet. Start generating content!</p>
+      </div>
+      {% endif %}
+
+    </main>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

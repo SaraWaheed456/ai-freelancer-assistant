@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Contract · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item active"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer"><div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar"><div style="font-family:var(--font-display);font-size:16px;font-weight:600;">New Contract</div></header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+      <div class="two-col-layout">
+        <div class="panel">
+          <div class="panel-head"><h2>Contract Details</h2></div>
+          <form method="POST" action="/contracts/create">
+            <div class="field"><label>Client Name</label><input type="text" name="client_name" placeholder="e.g. John Smith" value="{{ client_name or '' }}" required></div>
+            <div class="field"><label>Client Email</label><input type="email" name="client_email" placeholder="e.g. john@example.com" value="{{ client_email or '' }}" required></div>
+            <div class="field"><label>Your Name (Freelancer)</label><input type="text" name="freelancer_name" placeholder="e.g. Sara Waheed" value="{{ freelancer_name or '' }}" required></div>
+            <div class="field"><label>Your Email</label><input type="email" name="freelancer_email" placeholder="e.g. sara@example.com" value="{{ freelancer_email or '' }}" required></div>
+            <div class="field"><label>Project Scope</label><textarea name="project_scope" rows="3" placeholder="e.g. Design and develop a portfolio website with gallery, about, and contact pages" required>{{ project_scope or '' }}</textarea></div>
+            <div class="field"><label>Timeline</label><input type="text" name="timeline" placeholder="e.g. 2 weeks, starting July 1" value="{{ timeline or '' }}" required></div>
+            <div class="field"><label>Payment Terms</label><input type="text" name="payment_terms" placeholder="e.g. 50% upfront, 50% on delivery" value="{{ payment_terms or '' }}" required></div>
+            <div class="field"><label>Terms & Conditions</label><textarea name="terms_conditions" rows="3" placeholder="e.g. 3 revisions included, additional revisions at $20 each. Client owns final deliverables after full payment.">{{ terms_conditions or '' }}</textarea></div>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button type="submit" name="action" value="generate" class="btn-primary" style="flex:1;padding:12px;">Generate with AI</button>
+              {% if generated_contract %}
+              <button type="submit" name="action" value="save" class="btn-secondary" style="flex:1;padding:12px;">Save Contract</button>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Generated Contract</h2>
+            {% if generated_contract %}<button class="action-btn" onclick="navigator.clipboard.writeText(document.getElementById('contractOut').innerText).then(()=>alert('Copied!'))">Copy</button>{% endif %}
+          </div>
+          {% if generated_contract %}
+          <div id="contractOut" class="generated-text">{{ generated_contract }}</div>
+          {% else %}
+          <div class="empty-state" style="min-height:300px;"><p style="color:var(--text-muted);">Fill in details and click Generate with AI.</p></div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">AI is generating your content...</div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const action = document.activeElement.value;
+  if (action === 'generate') {
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/history" class="nav-item"><span class="icon">🕐</span> History</a>
+      <a href="/profile" class="nav-item"><span class="icon">👤</span> Profile</a>
+      <a href="/settings" class="nav-item active"><span class="icon">⚙</span> Settings</a>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer"><div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar"><div style="font-family:var(--font-display);font-size:16px;font-weight:600;">Settings</div></header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+
+      <div class="two-col-layout">
+
+        <!-- API Key Settings -->
+        <div class="panel">
+          <div class="panel-head"><h2>🔑 API Key Settings</h2></div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Enter your Groq API key. Get it free from console.groq.com</p>
+          <form method="POST" action="/settings">
+            <input type="hidden" name="action" value="save_api_key">
+            <div class="field">
+              <label>Groq API Key</label>
+              <input type="password" name="groq_api_key" value="{{ settings.get('groq_api_key', '') }}" placeholder="gsk_...">
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;padding:12px;">Save API Key</button>
+          </form>
+        </div>
+
+        <!-- App Preferences -->
+        <div class="panel">
+          <div class="panel-head"><h2>⚙ App Preferences</h2></div>
+          <form method="POST" action="/settings">
+            <input type="hidden" name="action" value="save_preferences">
+
+            <!-- Theme Toggle -->
+            <div class="field">
+              <label>Theme</label>
+              <div style="display:flex; gap:10px; margin-top:8px;">
+                <button type="button" onclick="toggleTheme('dark')"
+                  id="darkBtn"
+                  style="flex:1; padding:10px; border-radius:8px;
+                  border:2px solid var(--border-soft);
+                  background:var(--ink); color:var(--text-primary);
+                  cursor:pointer; font-family:inherit;
+                  font-size:13px; font-weight:600;">
+                  🌙 Dark
+                </button>
+                <button type="button" onclick="toggleTheme('light')"
+                  id="lightBtn"
+                  style="flex:1; padding:10px; border-radius:8px;
+                  border:2px solid var(--border-soft);
+                  background:#F5F5F0; color:#1A1A1A;
+                  cursor:pointer; font-family:inherit;
+                  font-size:13px; font-weight:600;">
+                  ☀️ Light
+                </button>
+              </div>
+              <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">
+                Current: <span id="currentTheme">Dark</span>
+              </p>
+            </div>
+
+            <div class="field">
+              <label>Language</label>
+              <select name="language">
+                <option value="english" {% if settings.get('language','english') == 'english' %}selected{% endif %}>English</option>
+                <option value="urdu" {% if settings.get('language') == 'urdu' %}selected{% endif %}>Urdu</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Notifications</label>
+              <select name="notifications">
+                <option value="on" {% if settings.get('notifications','on') == 'on' %}selected{% endif %}>On</option>
+                <option value="off" {% if settings.get('notifications') == 'off' %}selected{% endif %}>Off</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width:100%;padding:12px;">Save Preferences</button>
+          </form>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+  // Show current theme on page load
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  document.getElementById('currentTheme').textContent =
+    currentTheme === 'light' ? 'Light ☀️' : 'Dark 🌙';
+</script>
+
+</body>
+</html>

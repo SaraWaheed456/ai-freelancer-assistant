@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Gig · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item active"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div>
+    </div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div style="font-family: var(--font-display); font-size:16px; font-weight:600;">New Gig Description</div>
+    </header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for message in messages %}
+          <div class="info-box" style="display:block; margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+      <div class="two-col-layout">
+        <div class="panel">
+          <div class="panel-head"><h2>Gig Details</h2></div>
+          <form method="POST" action="/gig-generator/create">
+            <div class="field">
+              <label>Service Category</label>
+              <input type="text" name="category" placeholder="e.g. Logo Design, Web Development" value="{{ category or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Your Skills</label>
+              <input type="text" name="skills" placeholder="e.g. Photoshop, Illustrator, Figma" value="{{ skills or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Experience Level</label>
+              <select name="experience_level">
+                <option value="Beginner" {% if experience_level == 'Beginner' %}selected{% endif %}>Beginner</option>
+                <option value="Intermediate" {% if experience_level == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                <option value="Expert" {% if experience_level == 'Expert' %}selected{% endif %}>Expert</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Delivery Time</label>
+              <input type="text" name="delivery_time" placeholder="e.g. 3 days" value="{{ delivery_time or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Features Included</label>
+              <textarea name="features" rows="3" placeholder="e.g. Source file, Print ready file, 3 logo concepts, Commercial use" required>{{ features or '' }}</textarea>
+            </div>
+            <div class="field">
+              <label>Number of Revisions</label>
+              <input type="text" name="revisions" placeholder="e.g. 3 revisions" value="{{ revisions or '' }}" required>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button type="submit" name="action" value="generate" class="btn-primary" style="flex:1; padding:12px;">Generate with AI</button>
+              {% if generated_description %}
+              <button type="submit" name="action" value="save" class="btn-secondary" style="flex:1; padding:12px;">Save Gig</button>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>AI Generated Content</h2></div>
+          {% if generated_description %}
+          <div style="margin-bottom:20px;">
+            <h3 style="font-size:14px; color: var(--signal); margin-bottom:8px;">📝 Gig Description</h3>
+            <div class="generated-text">{{ generated_description }}</div>
+          </div>
+          {% if seo_keywords %}
+          <div style="margin-bottom:20px;">
+            <h3 style="font-size:14px; color: var(--teal); margin-bottom:8px;">🔑 SEO Keywords</h3>
+            <div class="generated-text">{{ seo_keywords }}</div>
+          </div>
+          {% endif %}
+          {% if faq_suggestions %}
+          <div>
+            <h3 style="font-size:14px; color: var(--text-secondary); margin-bottom:8px;">❓ FAQ Suggestions</h3>
+            <div class="generated-text">{{ faq_suggestions }}</div>
+          </div>
+          {% endif %}
+          {% else %}
+          <div class="empty-state" style="min-height:300px;">
+            <p style="color: var(--text-muted);">Fill in the form and click "Generate with AI".</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">AI is generating your content...</div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const action = document.activeElement.value;
+  if (action === 'generate') {
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

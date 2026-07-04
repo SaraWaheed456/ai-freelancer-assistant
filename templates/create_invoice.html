@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Invoice · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item active"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer"><div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar"><div style="font-family:var(--font-display);font-size:16px;font-weight:600;">New Invoice</div></header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+      <div class="panel" style="max-width:600px;">
+        <div class="panel-head"><h2>Invoice Details</h2></div>
+        <form method="POST" action="/invoices/create">
+          <div class="field"><label>Client Name</label><input type="text" name="client_name" placeholder="e.g. John Smith" required></div>
+          <div class="field"><label>Client Email</label><input type="email" name="client_email" placeholder="e.g. john@example.com" required></div>
+          <div class="field"><label>Project Title</label><input type="text" name="project_title" placeholder="e.g. Portfolio Website Development" required></div>
+          <div class="field"><label>Services Provided</label><textarea name="services" rows="4" placeholder="e.g. Website design, Development, SEO setup" required></textarea></div>
+          <div class="field"><label>Amount ($)</label><input type="number" name="amount" placeholder="e.g. 300" required></div>
+          <div class="field"><label>Tax (%)</label><input type="number" name="tax" placeholder="e.g. 10" value="0"></div>
+          <div class="field"><label>Due Date</label><input type="date" name="due_date" required></div>
+          <button type="submit" class="btn-primary" style="width:100%;padding:13px;margin-top:8px;">Generate Invoice & Download PDF</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

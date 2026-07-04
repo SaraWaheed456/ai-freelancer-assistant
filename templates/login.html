@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="auth-page">
+
+  <div class="auth-side">
+    <div class="ledger-mark"><span class="dot">●</span> Freelancer Assistant</div>
+    <div class="auth-side-content">
+      <div class="ledger-stack">
+        <div class="ledger-receipt">
+          <span class="tag">Today</span>
+          <strong>12 Proposals</strong>
+          generated for active jobs
+        </div>
+        <div class="ledger-receipt">
+          <span class="tag">Credits</span>
+          <strong>238 left</strong>
+          on your current plan
+        </div>
+      </div>
+      <p class="ledger-stat-line">Every proposal, cover letter, and client is logged in one ledger.</p>
+    </div>
+    <p class="auth-quote">"I stopped writing proposals from scratch." — a freelancer, probably</p>
+  </div>
+
+  <div class="auth-main">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Log in to pick up where you left off.</p>
+
+      <!-- Flash messages (errors ya success) -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="info-box" style="display:block;">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="/login">
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="field-row">
+          <label class="remember"><input type="checkbox"> Remember me</label>
+          <a href="/forgot-password" class="link-accent">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary">Log In</button>
+      </form>
+
+      <p class="auth-foot">Don't have an account? <a href="/register" class="link-accent">Create one</a></p>
+    </div>
+  </div>
+
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

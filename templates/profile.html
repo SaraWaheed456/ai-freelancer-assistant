@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/history" class="nav-item"><span class="icon">🕐</span> History</a>
+      <a href="/profile" class="nav-item active"><span class="icon">👤</span> Profile</a>
+      <a href="/settings" class="nav-item"><span class="icon">⚙</span> Settings</a>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer"><div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar"><div style="font-family:var(--font-display);font-size:16px;font-weight:600;">My Profile</div></header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+
+      <div class="two-col-layout">
+
+        <!-- Edit Profile -->
+        <div class="panel">
+          <div class="panel-head"><h2>Edit Profile</h2></div>
+
+          <!-- Profile Picture -->
+          <div style="text-align:center;margin-bottom:20px;">
+            {% if profile and profile['profile_picture'] %}
+            <img src="{{ url_for('static', filename=profile['profile_picture']) }}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--signal);">
+            {% else %}
+            <div class="avatar" style="width:80px;height:80px;font-size:28px;margin:0 auto;">{{ profile['full_name'][0] | upper if profile and profile['full_name'] else 'U' }}</div>
+            {% endif %}
+          </div>
+
+          <form method="POST" action="/profile" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="update_profile">
+            <div class="field">
+              <label>Profile Picture</label>
+              <input type="file" name="profile_picture" accept="image/*" style="background:var(--panel);border:1px solid var(--border-soft);border-radius:var(--radius);padding:10px;width:100%;color:var(--text-secondary);">
+            </div>
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" name="full_name" value="{{ profile['full_name'] if profile and profile['full_name'] else '' }}" required>
+            </div>
+            <div class="field">
+              <label>Bio</label>
+              <textarea name="bio" rows="3" placeholder="Tell clients about yourself...">{{ profile['bio'] if profile and profile['bio'] else '' }}</textarea>
+            </div>
+            <div class="field">
+              <label>Phone</label>
+              <input type="text" name="phone" value="{{ profile['phone'] if profile and profile['phone'] else '' }}" placeholder="e.g. +92 300 1234567">
+            </div>
+            <div class="field">
+              <label>Location</label>
+              <input type="text" name="location" value="{{ profile['location'] if profile and profile['location'] else '' }}" placeholder="e.g. Lahore, Pakistan">
+            </div>
+            <div class="field">
+              <label>Skills</label>
+              <input type="text" name="skills" value="{{ profile['skills'] if profile and profile['skills'] else '' }}" placeholder="e.g. Python, Flask, React, UI Design">
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;padding:12px;">Update Profile</button>
+          </form>
+        </div>
+
+        <!-- Change Password -->
+        <div class="panel">
+          <div class="panel-head"><h2>Change Password</h2></div>
+          <form method="POST" action="/profile">
+            <input type="hidden" name="action" value="change_password">
+            <div class="field">
+              <label>Current Password</label>
+              <input type="password" name="current_password" placeholder="Enter current password" required>
+            </div>
+            <div class="field">
+              <label>New Password</label>
+              <input type="password" name="new_password" placeholder="Enter new password (min 6 chars)" required>
+            </div>
+            <div class="field">
+              <label>Confirm New Password</label>
+              <input type="password" name="confirm_password" placeholder="Re-enter new password" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;padding:12px;">Change Password</button>
+          </form>
+
+          <!-- Account Info -->
+          <div style="margin-top:28px;border-top:1px solid var(--border-soft);padding-top:20px;">
+            <div class="panel-head"><h2>Account Info</h2></div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:2;">
+              <div>Email: <strong style="color:var(--text-primary);">{{ user['email'] }}</strong></div>
+              <div>Member since: <strong style="color:var(--text-primary);">{{ user['created_at'][:10] }}</strong></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

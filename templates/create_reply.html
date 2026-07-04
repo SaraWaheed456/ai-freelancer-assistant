@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Reply · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item active"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer"><div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar"><div style="font-family:var(--font-display);font-size:16px;font-weight:600;">Reply to Client</div></header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+      <div class="two-col-layout">
+        <div class="panel">
+          <div class="panel-head"><h2>Client Message</h2></div>
+          <form method="POST" action="/client-replies/create">
+            <div class="field">
+              <label>Client's Message</label>
+              <textarea name="client_message" rows="6" placeholder="Paste the client's message here..." required>{{ client_message or '' }}</textarea>
+            </div>
+            <div class="field">
+              <label>Reply Tone</label>
+              <select name="tone">
+                <option value="Professional" {% if tone=='Professional' %}selected{% endif %}>Professional</option>
+                <option value="Friendly" {% if tone=='Friendly' %}selected{% endif %}>Friendly</option>
+                <option value="Apologetic" {% if tone=='Apologetic' %}selected{% endif %}>Apologetic</option>
+                <option value="Assertive" {% if tone=='Assertive' %}selected{% endif %}>Assertive</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button type="submit" name="action" value="generate" class="btn-primary" style="flex:1;padding:12px;">Generate Reply</button>
+              {% if generated_reply %}
+              <button type="submit" name="action" value="save" class="btn-secondary" style="flex:1;padding:12px;">Save Reply</button>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>AI Generated Reply</h2>
+            {% if generated_reply %}<button class="action-btn" onclick="navigator.clipboard.writeText(document.getElementById('replyOut').innerText).then(()=>alert('Copied!'))">Copy</button>{% endif %}
+          </div>
+          {% if generated_reply %}
+          <div id="replyOut" class="generated-text">{{ generated_reply }}</div>
+          {% else %}
+          <div class="empty-state" style="min-height:200px;"><p style="color:var(--text-muted);">Paste client message and click Generate.</p></div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">AI is generating your content...</div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const action = document.activeElement.value;
+  if (action === 'generate') {
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

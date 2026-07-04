@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contracts · AI Freelancer Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot">●</span> Freelancer Assistant</div>
+    <nav>
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item"><span class="icon">▤</span> Dashboard</a>
+      <a href="/proposals" class="nav-item"><span class="icon">✎</span> Proposals</a>
+      <a href="/cover-letters" class="nav-item"><span class="icon">✉</span> Cover Letters</a>
+      <a href="/gig-generator" class="nav-item"><span class="icon">⚡</span> Gig Generator</a>
+      <a href="/pricing" class="nav-item"><span class="icon">💰</span> Pricing</a>
+      <div class="nav-section-label">Communication</div>
+      <a href="/client-replies" class="nav-item"><span class="icon">💬</span> Client Replies</a>
+      <a href="/invoices" class="nav-item"><span class="icon">🧾</span> Invoices</a>
+      <a href="/contracts" class="nav-item active"><span class="icon">📄</span> Contracts</a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout" class="nav-item"><span class="icon">⎋</span> Log Out</a>
+    </nav>
+    <div class="sidebar-footer"><div class="credit-pill"><span>AI Credits</span><strong>238 / 500</strong></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="search-bar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input type="text" placeholder="Search contracts..."></div>
+      <div class="topbar-right"><a href="/contracts/create" class="btn-primary" style="padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;">+ New Contract</a></div>
+    </header>
+    <main class="content">
+      {% with messages = get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="info-box" style="display:block;margin-bottom:16px;">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+      <div class="content-header"><div><h1>Contracts</h1><p>All your AI-generated freelance contracts.</p></div></div>
+      {% if contracts %}
+      <div class="proposals-list">
+        {% for c in contracts %}
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <div><h3>{{ c['client_name'] }}</h3><span class="proposal-meta">Freelancer: {{ c['freelancer_name'] }} | Timeline: {{ c['timeline'] }}</span></div>
+            <span class="tone-badge">Contract</span>
+          </div>
+          <p class="proposal-preview">{{ c['project_scope'][:150] }}</p>
+          <div class="proposal-actions">
+            <a href="/contracts/export/{{ c['id'] }}" class="action-btn">Export PDF</a>
+            <a href="/contracts/delete/{{ c['id'] }}" class="action-btn danger-btn" onclick="return confirm('Delete?')">Delete</a>
+          </div>
+          <div class="proposal-date">{{ c['created_at'] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state"><p>No contracts yet.</p><a href="/contracts/create" class="btn-primary" style="display:inline-block;margin-top:14px;padding:10px 22px;border-radius:8px;">Create First Contract</a></div>
+      {% endif %}
+    </main>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
