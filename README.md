@@ -117,8 +117,7 @@ ai-freelancer-assistant/
 
 ## Deployment
 
-Deployed on Render: Coming Soon
-
+Deployed on Render: https://ai-freelancer-assistant-production.up.railway.app
 ## Developer
 
 Sara Waheed
