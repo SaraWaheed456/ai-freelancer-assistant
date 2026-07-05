@@ -1020,6 +1020,10 @@ def export_contract_pdf(cid):
     return send_file(tmp.name, mimetype='application/pdf', as_attachment=True, download_name=f'contract_{cid}.pdf')
 
 # ---------- RUN ----------
+
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
+
+# Railway ke liye database initialize karo
+init_db()
